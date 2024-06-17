@@ -1,4 +1,5 @@
 import phonenumbers
+import colorama
 from phonenumbers import geocoder, carrier, number_type, PhoneNumberType
 from colorama import init, Fore, Style
 
