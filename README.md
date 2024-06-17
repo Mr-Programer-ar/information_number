@@ -1,1 +1,65 @@
 # information_number
+
+# information_number
+
+import phonenumbers
+import colorama
+from phonenumbers import geocoder, carrier, number_type, PhoneNumberType
+from colorama import init, Fore, Style
+
+def format_phone_number(country_code, local_number):
+    if not local_number.startswith("+"):
+        return f"+{country_code}{local_number}"
+    return local_number
+
+def get_phone_number_info(phone_number):
+    try:
+        parsed_number = phonenumbers.parse(phone_number)
+        country = geocoder.description_for_number(parsed_number, "en")
+        operator = carrier.name_for_number(parsed_number, "en")
+        num_type = number_type(parsed_number)
+
+        if num_type == PhoneNumberType.MOBILE:
+            line_type = "Mobile"
+        elif num_type == PhoneNumberType.FIXED_LINE:
+            line_type = "Fixed line"
+        elif num_type == PhoneNumberType.FIXED_LINE_OR_MOBILE:
+            line_type = "Fixed line or Mobile"
+        elif num_type == PhoneNumberType.VOIP:
+            line_type = "VOIP"
+        else:
+            line_type = "Unknown"
+
+        if not country:
+            country = "Unknown country"
+        if not operator:
+            operator = "Unknown operator"
+
+        return {
+            "Country": country,
+            "Operator": operator,
+            "Line Type": line_type
+        }
+    except phonenumbers.NumberParseException:
+        return {"Error": "Invalid phone number"}
+
+if __name__ == "__main__":
+    init(autoreset=True)
+
+    print(Fore.GREEN + "Please enter area code number:(code keshvar)")
+    print(Fore.GREEN + "Local phone number format should be without '+' (9123456789)")
+    print(Fore.RED + "your info")
+    local_number = input(Fore.BLUE + "Please enter your number (09123456789): ")
+    country_code = input(Fore.BLUE + "Please enter area code of your number (98 for Iran): ")
+    
+    phone_number = format_phone_number(country_code, local_number)
+    
+    info = get_phone_number_info(phone_number)
+
+    if "Error" in info:
+        print(info["Error"])
+    else:
+        print(f"Country: {info['Country']}")
+        print(f"Operator: {info['Operator']}")
+        print(f"Line Type: {info['Line Type']}")
+
